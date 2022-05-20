@@ -2,6 +2,8 @@
 require('dotenv').config({path: './config/.env'})
 const express = require('express');
 const bodyParser = require('body-parser');
+const nunjucks = require('nunjucks')
+const {resolve} = require('path')
 
 
 // Tự định nghĩa
@@ -10,8 +12,15 @@ let client = require('./router/client.router')
 
 const app = express();
 
-app.set('view engine', 'ejs');
-app.set('views', './views');
+nunjucks.configure('views', {
+    autoescape: true,
+    express: app,
+    watch: process.env.NODE_ENV !== 'production',
+});
+
+app
+.set('views', resolve(process.cwd(), 'views'))
+.set('view engine', 'html');
 
 app.use(express.static("public"))
 
